@@ -1,0 +1,36 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.0-SNAPSHOT'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'io.github.simonnozaki'
+version = '0.0.2'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+	compileOnly 'org.projectlombok:lombok:1.18.38'
+	annotationProcessor 'org.projectlombok:lombok:1.18.38'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.xerial:sqlite-jdbc:3.49.1.0'
+	implementation 'org.hibernate.orm:hibernate-community-dialects:6.6.13.Final'
+	implementation 'io.vavr:vavr:0.10.6'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.hamcrest:hamcrest:3.0'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
