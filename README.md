@@ -43,10 +43,10 @@ sqlite> .exit
 
 ### 実行可能Jarのビルド
 
-スタンドアローンで実行できるJarをビルドする。ビルド時にはテストさせないよう、 `-x` で除外する。
+スタンドアローンで実行できるJarをビルドする。
 
 ```bash
-./gradlew build -x test
+./gradlew build
 ```
 
 `java -jar <生成したjarファイル>` で実行できる:
