@@ -1,11 +1,11 @@
 package io.github.simonnozaki.longtimenosee.application;
 
 import io.vavr.collection.Stream;
+import io.vavr.control.Try;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.OptionalLong;
 
 /**
  * 解析したCLI引数を格納するレコードクラス
@@ -22,17 +22,8 @@ public record AppOption(CliModes mode, Map<String, List<String>> optionArgs) {
                 .getValue()
                 .getFirst();
 
-        return safeParseLong(rawId).orElseThrow(() -> new InvalidArgumentOptionException("Id should be a number"));
-    }
-
-    /**
-     * 文字列 -> Long型への変換をOptionに丸める
-     */
-    private OptionalLong safeParseLong(String str) {
-        try {
-            return OptionalLong.of(Long.parseLong(str));
-        } catch (NumberFormatException e) {
-            return OptionalLong.empty();
-        }
+        return Try
+                .of(() -> Long.parseLong(rawId))
+                .getOrElseThrow(() -> new InvalidArgumentOptionException("Id should be a number"));
     }
 }

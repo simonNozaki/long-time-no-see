@@ -28,9 +28,9 @@ public class UseCase {
     }
 
     public FindUseCaseOutput findById(Long id) throws NotFoundRuntimeException {
-        var note = repository.findById(id).orElseThrow(
-                () -> new NotFoundRuntimeException("Note id %d not found".formatted(id))
-        );
+        var note = repository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundRuntimeException("Note id %d not found".formatted(id)));
         log.info("Record id: %d found".formatted(id));
 
         return fromEntityToOutput(note);

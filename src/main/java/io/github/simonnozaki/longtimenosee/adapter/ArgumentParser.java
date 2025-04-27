@@ -2,6 +2,7 @@ package io.github.simonnozaki.longtimenosee.adapter;
 
 import io.github.simonnozaki.longtimenosee.application.AppOption;
 import io.github.simonnozaki.longtimenosee.application.CliModes;
+import io.vavr.collection.Stream;
 import org.springframework.boot.ApplicationArguments;
 
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ public class ArgumentParser {
                 .orElse("")
                 .toUpperCase();
         var mode = CliModes.valueOrDefault(rawMode);
-        var optionArgs = args.getOptionNames().stream().collect(Collectors.toMap((name) -> name, args::getOptionValues));
+        var optionArgs = Stream.ofAll(args.getOptionNames()).toMap((k) -> k, args::getOptionValues).toJavaMap();
         return new AppOption(mode, optionArgs);
     }
 }

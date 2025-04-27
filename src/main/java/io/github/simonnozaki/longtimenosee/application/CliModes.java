@@ -1,5 +1,7 @@
 package io.github.simonnozaki.longtimenosee.application;
 
+import io.vavr.control.Try;
+
 import java.util.Optional;
 
 /**
@@ -17,11 +19,8 @@ public enum CliModes {
      * 引数文字列が定義されていない列挙型に相当する場合に初期値を返すラップ関数
      */
     public static CliModes valueOrDefault(String rawMode) {
-        var modeStr = Optional.ofNullable(rawMode).orElseGet(() -> "");
-        try {
-            return CliModes.valueOf(modeStr);
-        } catch (IllegalArgumentException e) {
-            return NONE;
-        }
+        return Try
+                .of(() -> CliModes.valueOf(rawMode))
+                .getOrElse(NONE);
     }
 }
