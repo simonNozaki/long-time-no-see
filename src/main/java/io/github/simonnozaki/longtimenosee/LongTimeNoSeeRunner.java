@@ -60,7 +60,7 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
         }
         var content = Optional
                 .ofNullable(option.optionArgs().get("content").getFirst())
-                .orElse("");;
+                .orElse("");
         var input = new CreateUseCaseInput(content);
         var output = useCase.create(input);
         printer.printForTable(output);
