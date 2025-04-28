@@ -139,7 +139,10 @@ public class UseCaseTest {
                     new Entity(1L, "Long time no see", "2025-04-25T13:00:00.000", "2025-04-25T13:00:00.000")
             );
             Mockito.when(repository.findById(1L)).thenReturn(mockResult);
-            assertDoesNotThrow(() -> repository.deleteById(1L));
+            var result = useCase.deleteById(1L);
+
+            Mockito.verify(repository).deleteById(1L);
+            assertEquals("Long time no see", result.getContent());
         }
     }
 }
