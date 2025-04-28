@@ -13,7 +13,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,7 +48,7 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
     private void printById(AppOption option) {
         var id = option.getIdOrThrow();
         var note = useCase.findById(id);
-        printer.printForTable(List.of(note));
+        printer.printForTable(note);
     }
 
     /**
@@ -63,7 +62,8 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
                 .ofNullable(option.optionArgs().get("content").getFirst())
                 .orElse("");;
         var input = new CreateUseCaseInput(content);
-        useCase.create(input);
+        var output = useCase.create(input);
+        printer.printForTable(output);
     }
 
     /**
@@ -71,7 +71,8 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
      */
     private void deleteById(AppOption option) {
         var id = option.getIdOrThrow();
-        useCase.deleteById(id);
+        var output = useCase.deleteById(id);
+        printer.printForTable(output);
     }
 
     /**
@@ -83,6 +84,7 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
                 .findFirst()
                 .orElseThrow(() -> new InvalidArgumentOptionException("Content required when updating a note"));
         var input = new UpdateUseCaseInput(id, content);
-        useCase.updateById(input);
+        var output = useCase.updateById(input);
+        printer.printForTable(output);
     }
 }
