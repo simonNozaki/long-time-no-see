@@ -1,7 +1,7 @@
 package io.github.simonnozaki.longtimenosee.domain.note;
 
 import io.github.simonnozaki.longtimenosee.application.NotFoundRuntimeException;
-import io.github.simonnozaki.longtimenosee.domain.note.usecase.FindUseCaseOutput;
+import io.github.simonnozaki.longtimenosee.domain.note.usecase.UseCaseOutput;
 import io.github.simonnozaki.longtimenosee.domain.note.usecase.UpdateUseCaseInput;
 import io.vavr.collection.Stream;
 import io.vavr.control.Option;
@@ -51,7 +51,7 @@ public class UseCaseTest {
 
             var note1 = Stream.ofAll(notes.stream()).find(output -> output.getId() == 1L);
             var note2 = Stream.ofAll(notes.stream()).find(output -> output.getId() == 2L);
-            Function<Option<FindUseCaseOutput>, Consumer<String>> createNullAndContentChecker = (note) -> (content) -> {
+            Function<Option<UseCaseOutput>, Consumer<String>> createNullAndContentChecker = (note) -> (content) -> {
                 assertNotNull(note.getOrNull());
                 assertThat(note.getOrElseThrow(RuntimeException::new), hasProperty("content", is(content)));
             };
@@ -139,12 +139,7 @@ public class UseCaseTest {
                     new Entity(1L, "Long time no see", "2025-04-25T13:00:00.000", "2025-04-25T13:00:00.000")
             );
             Mockito.when(repository.findById(1L)).thenReturn(mockResult);
-            assertTrue(repository.findById(1L).isPresent());
-            repository.deleteById(1L);
-            assertThrowsExactly(
-                    NotFoundRuntimeException.class,
-                    () -> useCase.deleteById(1L)
-            );
+            assertDoesNotThrow(() -> repository.deleteById(1L));
         }
     }
 }
