@@ -2,17 +2,18 @@ package io.github.simonnozaki.longtimenosee.domain.note;
 
 import io.github.simonnozaki.longtimenosee.application.NotFoundRuntimeException;
 import io.github.simonnozaki.longtimenosee.domain.note.usecase.FindUseCaseOutput;
+import io.github.simonnozaki.longtimenosee.domain.note.usecase.UpdateUseCaseInput;
 import io.vavr.collection.Stream;
 import io.vavr.control.Option;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -65,9 +66,10 @@ public class UseCaseTest {
         @Test
         void shouldThrowRuntimeException() {
             Mockito.when(repository.findById(Mockito.any())).thenReturn(Optional.empty());
-            assertThrows(NotFoundRuntimeException.class, () -> {
-                useCase.findById(1L);
-            });
+            assertThrows(
+                    NotFoundRuntimeException.class,
+                    () -> useCase.findById(1L)
+            );
         }
 
         @Test
@@ -79,6 +81,70 @@ public class UseCaseTest {
 
             var target = useCase.findById(3L);
             assertEquals("Long time no see", target.getContent());
+        }
+    }
+
+    @Nested
+    @DisplayName("#create")
+    class CreateUseCase {
+        @Test
+        void shouldSave() {
+            var entity = Entity.builder().content("new note").build();
+            assertDoesNotThrow(() -> repository.save(entity));
+        }
+    }
+
+    @Nested
+    @DisplayName("#updateById")
+    class UpdateById {
+        @Test
+        void targetShouldExist() {
+            assertThrowsExactly(NotFoundRuntimeException.class, () -> {
+                var req = new UpdateUseCaseInput(1L, "updated note");
+                useCase.updateById(req);
+            });
+        }
+
+        @Test
+        void shouldUpdate() {
+            var mockResult = Optional.of(
+                    new Entity(1L, "Long time no see", "2025-04-25T13:00:00.000", "2025-04-25T13:00:00.000")
+            );
+            Mockito.when(repository.findById(1L)).thenReturn(mockResult);
+            assertAll(
+                    () -> useCase.updateById(new UpdateUseCaseInput(1L, "updated note")),
+                    () -> {
+                        var target = repository.findById(1L);
+                        assertTrue(target.isPresent());
+                        assertEquals("updated note", target.get().getContent());
+                    }
+            );
+        }
+    }
+
+    @Nested
+    @DisplayName("#deleteById")
+    class DeleteById {
+        @Test
+        void targetShouldExist() {
+            assertThrowsExactly(
+                    NotFoundRuntimeException.class,
+                    () -> useCase.deleteById(1L)
+            );
+        }
+
+        @Test
+        void shouldDeleteById() {
+            var mockResult = Optional.of(
+                    new Entity(1L, "Long time no see", "2025-04-25T13:00:00.000", "2025-04-25T13:00:00.000")
+            );
+            Mockito.when(repository.findById(1L)).thenReturn(mockResult);
+            assertTrue(repository.findById(1L).isPresent());
+            repository.deleteById(1L);
+            assertThrowsExactly(
+                    NotFoundRuntimeException.class,
+                    () -> useCase.deleteById(1L)
+            );
         }
     }
 }

@@ -35,8 +35,8 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
             case LIST -> printAll();
             case CREATE -> createNote(option);
             case FIND -> printById(option);
-            case DELETE -> deleteNote(option);
-            case UPDATE -> updateNote(option);
+            case DELETE -> deleteById(option);
+            case UPDATE -> updateById(option);
             default -> log.info("Nothing processed");
         }
     }
@@ -69,20 +69,20 @@ public class LongTimeNoSeeRunner implements ApplicationRunner {
     /**
      * ID指定でメモを削除する
      */
-    private void deleteNote(AppOption option) {
+    private void deleteById(AppOption option) {
         var id = option.getIdOrThrow();
-        useCase.delete(id);
+        useCase.deleteById(id);
     }
 
     /**
      * ID指定でメモを編集する
      */
-    private void updateNote(AppOption option) {
+    private void updateById(AppOption option) {
         var id = option.getIdOrThrow();
         var content = option.optionArgs().get("content").stream()
                 .findFirst()
                 .orElseThrow(() -> new InvalidArgumentOptionException("Content required when updating a note"));
         var input = new UpdateUseCaseInput(id, content);
-        useCase.update(input);
+        useCase.updateById(input);
     }
 }
