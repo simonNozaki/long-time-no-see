@@ -45,7 +45,7 @@ public class UseCase {
         log.info("Note saved");
     }
 
-    public void delete(Long id) throws NotFoundRuntimeException {
+    public void deleteById(Long id) throws NotFoundRuntimeException {
         if (!repository.existsById(id)) {
             throw new NotFoundRuntimeException("Note id: %d not found".formatted(id));
         }
@@ -54,7 +54,7 @@ public class UseCase {
         log.info(message);
     }
 
-    public void update(UpdateUseCaseInput input) throws NotFoundRuntimeException {
+    public void updateById(UpdateUseCaseInput input) throws NotFoundRuntimeException {
         var id = input.getId();
         var notes = repository
                 .findById(id)
