@@ -1,6 +1,6 @@
 package io.github.simonnozaki.longtimenosee.adapter;
 
-import io.github.simonnozaki.longtimenosee.domain.note.usecase.FindUseCaseOutput;
+import io.github.simonnozaki.longtimenosee.domain.note.usecase.UseCaseOutput;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -21,14 +21,26 @@ public class ConsolePrinter {
      * | 1|created at format test |2025-04-20T16:54:50.648110 |2025-04-20T16:54:50.648110 |
      * </pre>
      */
-    public void printForTable(List<FindUseCaseOutput> outputs) {
+    public void printForTable(UseCaseOutput output) {
+        printForTable(List.of(output));
+    }
+
+    /**
+     * 表形式に整形して出力する
+     *
+     * <pre>
+     * | #|Content                |Created at                 |Updated at                 |
+     * | 1|created at format test |2025-04-20T16:54:50.648110 |2025-04-20T16:54:50.648110 |
+     * </pre>
+     */
+    public void printForTable(List<UseCaseOutput> outputs) {
         var tableText = formatForTable(outputs);
         System.out.println(tableText);
     }
 
     private record TextLengths(Integer id, Integer content, Integer createdAt, Integer updatedAt) {}
 
-    private String formatForTable(List<FindUseCaseOutput> outputs) {
+    private String formatForTable(List<UseCaseOutput> outputs) {
         var idColumnMaxLength = getMaxLength(outputs, (n) -> n.getId().toString().length());
         var contentColumnMaxLength = getMaxLength(outputs, (n) -> n.getContent().length());
         var createdAtColumnLength = getMaxLength(outputs, (n) -> n.getCreatedAt().length());
@@ -43,7 +55,7 @@ public class ConsolePrinter {
      * 列ごとの最大長を返す
      * TODO マルチバイト文字を等幅フォントできれいにパディングする
      */
-    private Integer getMaxLength(List<FindUseCaseOutput> outputs, Function<FindUseCaseOutput, Integer> transformer) {
+    private Integer getMaxLength(List<UseCaseOutput> outputs, Function<UseCaseOutput, Integer> transformer) {
         var maxLength = outputs.stream()
                 .map(transformer)
                 .max(Comparator.naturalOrder())
@@ -55,14 +67,14 @@ public class ConsolePrinter {
     /**
      * 表の行を文字列として返す
      */
-    private List<String> toTableRows(List<FindUseCaseOutput> outputs, TextLengths lengths) {
+    private List<String> toTableRows(List<UseCaseOutput> outputs, TextLengths lengths) {
         var header = getHeaderRow(lengths);
         List<String> rows = new ArrayList<String>() {
             {
                 add(header);
             }
         };
-        for (FindUseCaseOutput output: outputs) {
+        for (UseCaseOutput output: outputs) {
             var idText =  pad(lengths.id, output.getId().toString(), Alignment.RIGHT);
             var contentText = pad(lengths.content, output.getContent(), Alignment.LEFT);
             var contentCreatedAt = pad(lengths.createdAt, output.getCreatedAt(), Alignment.LEFT);
